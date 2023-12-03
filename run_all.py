@@ -1,10 +1,10 @@
-import timeit
 import datetime
+import timeit
 
 if __name__ == '__main__':
-    # Uncomment if running current AoC
     today = datetime.datetime.now()
+    times = 10
     for d in range(1, today.day + 1):
         p = 'day' + str(d).zfill(2)
-        t = timeit.timeit('import ' + p + '; ' + p + '.main()', number=1)
-        print(p, ':', round(t, 3), 's')
+        t = timeit.timeit('import ' + p + '; ' + p + '.main()', number=times)
+        print(p, ':', round(t / times, 3), 's')
