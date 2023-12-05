@@ -21,14 +21,15 @@ def part1(data: List[str]):
 
 
 def part2(data: List[str]):
-    card_pile = [[line, 1] for line in data]
+    card_pile = [(line, 1) for line in data]
     for i in range(len(card_pile)):
         card, count = card_pile[i]
         card = card.split(':')[1].replace('  ', ' ').strip()
         winning, own = card.split(' | ')
         matches = sum([1 for n in own.split(' ') if n in winning.split(' ')])
         for j in range(1, matches + 1):
-            card_pile[i + j][1] += count
+            n = card_pile[i + j]
+            card_pile[i + j] = (n[0], n[1] + count)
         i += 1
     return sum(x[1] for x in card_pile)
 

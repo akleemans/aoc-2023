@@ -10,8 +10,11 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green'''.split('\n')
 
 
 class Game:
-    def __init__(self, id, grabs):
-        self.id = id
+    idx: int
+    grabs: List[List[int]]
+
+    def __init__(self, idx: int, grabs):
+        self.idx = idx
         self.grabs = grabs
 
 
@@ -41,7 +44,7 @@ def part1(data: List[str]):
         max_green = max([g[1] for g in game.grabs])
         max_blue = max([g[2] for g in game.grabs])
         if max_red <= 12 and max_green <= 13 and max_blue <= 14:
-            id_sum += game.id
+            id_sum += game.idx
     return id_sum
 
 
