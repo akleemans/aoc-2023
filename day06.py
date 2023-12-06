@@ -6,22 +6,23 @@ test_data = '''Time:      7  15   30
 Distance:  9  40  200'''.split('\n')
 
 
-def part1(data: List[str]):
-    times = [int(t) for t in data[0].split()[1:]]
-    distances = [int(d) for d in data[1].split()[1:]]
+def count_ways(times, distances):
     total_ways = 1
     for t, d in zip(times, distances):
         total_ways *= sum([1 for i in range(1, t) if i * (t - i) > d])
     return total_ways
+
+
+def part1(data: List[str]):
+    times = [int(t) for t in data[0].split()[1:]]
+    distances = [int(d) for d in data[1].split()[1:]]
+    return count_ways(times, distances)
 
 
 def part2(data: List[str]):
     times = [int(t) for t in data[0].replace(' ', '').split(':')[1:]]
     distances = [int(d) for d in data[1].replace(' ', '').split(':')[1:]]
-    total_ways = 1
-    for t, d in zip(times, distances):
-        total_ways *= sum([1 for i in range(1, t) if i * (t - i) > d])
-    return total_ways
+    return count_ways(times, distances)
 
 
 def main():
