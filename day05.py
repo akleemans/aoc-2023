@@ -64,6 +64,13 @@ def map_seed(entries, seed: int):
     return seed
 
 
+def map_seed_reverse(entries, seed: int):
+    for e in entries:
+        if (e[0] - e[2]) <= seed <= (e[1] - e[2]):
+            return seed + e[2]
+    return seed
+
+
 def part1(data: List[str]):
     seeds, maps = parse_input(data)
     lowest_location = 10 ** 10
@@ -74,7 +81,30 @@ def part1(data: List[str]):
     return lowest_location
 
 
+def in_seed_ranges(seed_ranges, seed):
+    for r in seed_ranges:
+        if r[0] <= seed <= r[1]:
+            return True
+    return False
+
+
 def part2(data: List[str]):
+    """More efficient way with backtracking from the lowest location"""
+    seeds, maps = parse_input(data)
+    seed_ranges = []
+    for i in range(0, len(seeds), 2):
+        seed_ranges.append((seeds[i], seeds[i] + seeds[i + 1]))
+
+    for i in range(10 ** 10):
+        location = i
+        for m in maps[::-1]:
+            location = map_seed_reverse(m, location)
+        if in_seed_ranges(seed_ranges, location):
+            return i
+
+
+def part2_brute_force(data: List[str]):
+    """Brute forcing part 2, takes around ~90s"""
     seeds, maps = parse_input(data)
     seed_ranges = []
     for i in range(0, len(seeds), 2):
