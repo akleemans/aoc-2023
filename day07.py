@@ -68,11 +68,9 @@ def part1(data: List[str]):
 
 def get_hand_candidates(hand, cards) -> List[str]:
     new_hands = []
+    new_hand = hand.replace('J', '')
     for replacement in itertools.combinations_with_replacement(cards, hand.count('J')):
-        new_hand = hand
-        for r in replacement:
-            new_hand = new_hand.replace('J', r, 1)
-        new_hands.append(new_hand)
+        new_hands.append(new_hand + ''.join(replacement))
     return new_hands
 
 
