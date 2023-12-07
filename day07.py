@@ -12,7 +12,7 @@ QQQJA 483'''.split('\n')
 card_types = {'FIVE': '6', 'FOUR': '5', 'FULL_HOUSE': '4', 'THREE': '3', 'TWO_PAIRS': '2', 'PAIR': '1', 'HIGH': '0'}
 
 
-def get_hands(data) -> List[Tuple[str, int]]:
+def parse_input(data) -> List[Tuple[str, int]]:
     hands = []
     for line in data:
         hand_str, bid = line.split()
@@ -33,7 +33,7 @@ def hexify(hand_str, has_joker=False):
     return hand_str.replace('A', 'E').replace('K', 'D').replace('Q', 'C').replace('J', 'B').replace('T', 'A')
 
 
-def get_value(hand_str, orig_hand=None):
+def get_value(hand_str: str, orig_hand=None) -> int:
     if count_n_tuple(hand_str, 5) == 1:
         prefix = card_types['FIVE']
     elif count_n_tuple(hand_str, 4) == 1:
@@ -60,7 +60,7 @@ def get_value(hand_str, orig_hand=None):
 
 def part1(data: List[str]):
     hands: List[Tuple[str, int, int]] = []
-    for hand, bid in get_hands(data):
+    for hand, bid in parse_input(data):
         hands.append((hand, bid, get_value(hand)))
     hands = sorted(hands, key=lambda c: c[2])
     return sum([hand[1] * (i + 1) for (i, hand) in enumerate(hands)])
@@ -76,7 +76,7 @@ def get_hand_candidates(hand, cards) -> List[str]:
 
 def part2(data: List[str]):
     hands = []
-    for hand, bid in get_hands(data):
+    for hand, bid in parse_input(data):
         hand_candidates = [hand]
         if 'J' in hand:
             card_candidates = set(hand.replace('J', ''))
