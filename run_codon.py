@@ -8,7 +8,7 @@ import time
 # time ./day03
 
 if __name__ == '__main__':
-    times = 10
+    times = 20
     today = datetime.datetime.now()
     for d in range(1, today.day + 1):
         p = 'day' + str(d).zfill(2)

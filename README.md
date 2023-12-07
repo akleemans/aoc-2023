@@ -7,7 +7,7 @@ My solution for [Advent of Code 2023](https://adventofcode.com/2023) in Python 3
 All code in Python/[Codon](https://docs.exaloop.io/codon).
 Timed with Codon 0.16.3: `python3 run_codon.py`
 
-| Day    | Codon  |
+| Day    | Time   |
 |--------|--------|
 | Day 1  | 0.023s |
 | Day 2  | 0.004s |
@@ -15,7 +15,7 @@ Timed with Codon 0.16.3: `python3 run_codon.py`
 | Day 4  | 0.007s |
 | Day 5  | 4.969s |
 | Day 6  | 0.361s |
-| Day 7  |        |
+| Day 7  | 0.009s |
 | Day 8  |        |
 | Day 9  |        |
 | Day 10 |        |
