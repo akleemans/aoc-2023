@@ -32,12 +32,11 @@ L7JLJL-JLJLJL--JLJ.L'''.split('\n')
 reverses = {'U': 'D', 'D': 'U', 'L': 'R', 'R': 'L'}
 dir_pairs = {'F': 'DR', '7': 'DL', 'J': 'LU', 'L': 'RU', '|': 'UD', '-': 'LR'}
 directions = {'U': (0, -1), 'D': (0, 1), 'L': (-1, 0), 'R': (1, 0)}
-
-# 1: clockwise, -1: counter-clockwise
-rel_dir_change = {'UL': -1, 'UR': 1, 'RU': -1, 'RD': 1, 'DL': -1, 'DR': 1, 'LD': -1, 'LU': 1}
+neighbor_coord_diffs = [(-1, 0, 'L'), (1, 0, 'R'), (0, -1, 'U'), (0, 1, 'D')]
 
 
 def get_coord(data, coord, oob_char='.'):
+    """Get character at coord. Handles out-of-bounds by returning oob_char"""
     x, y = coord
     if x < 0 or y < 0 or x >= len(data[0]) or y >= len(data):
         return oob_char
@@ -45,51 +44,25 @@ def get_coord(data, coord, oob_char='.'):
 
 
 def add(a, b) -> Tuple[int, int]:
+    """Add two coordinates"""
     return a[0] + b[0], a[1] + b[1]
 
 
-def find_start(data) -> Tuple[int, int]:
+def find_start(data: List[str]) -> Tuple[int, int]:
+    """Find coordinates of starting point"""
     for i, line in enumerate(data):
         if 'S' in line:
             return line.index('S'), i
 
 
-def part1(data: List[str]):
+def find_loop(data: List[str]):
+    """Find complete loop and return coordinates & directions"""
     start = find_start(data)
-
-    # Explore around start to find closed loop
-    for d in [(-1, 0, 'L'), (1, 0, 'R'), (0, -1, 'U'), (0, 1, 'D')]:
-        current_coords = add(start, d)
-        current_dir = d[2]
-        dist = 1
-        while True:
-            if get_coord(data, current_coords) == '.':
-                break
-            if current_coords == start:
-                return dist // 2
-            current_symbol = get_coord(data, current_coords)
-            dir_pair = dir_pairs[current_symbol]
-            next_dir = dir_pair.replace(reverses[current_dir], '')
-            current_coords = add(current_coords, directions[next_dir])
-            current_dir = next_dir
-            dist += 1
-
-
-def print_grid(grid: List[List[str]]) -> None:
-    for line in grid:
-        print(''.join(line))
-
-
-def part2(data: List[str]):
-    start = find_start(data)
-
     loop_coords = []
     loop_dirs = []
-    loop_direction = 0
-    for d in [(-1, 0, 'L'), (1, 0, 'R'), (0, -1, 'U'), (0, 1, 'D')]:
+    for d in neighbor_coord_diffs:
         current_coord = add(start, d)
         current_dir = d[2]
-        dist = 1
         loop_coords = [current_coord]
         loop_dirs = [current_dir]
         while True:
@@ -102,24 +75,52 @@ def part2(data: List[str]):
             next_dir = dir_pair.replace(reverses[current_dir], '')
             current_coord = add(current_coord, directions[next_dir])
             loop_coords.append(current_coord)
-            loop_direction += rel_dir_change.get(current_dir + next_dir, 0)
             current_dir = next_dir
             loop_dirs.append(current_dir)
-            dist += 1
         if current_coord == start:
             break
+    return loop_coords, loop_dirs
 
-    loop_dir = 'R' if loop_direction > 0 else 'L'
-    # Indicate what is "inside" the grid based on symbol and loop direction (L or R)
+
+def part1(data: List[str]):
+    loop_coords, loop_dirs = find_loop(data)
+    return len(loop_coords) // 2
+
+
+def print_grid(grid: List[List[str]]) -> None:
+    """Print grid for debugging"""
+    for line in grid:
+        print(''.join(line))
+
+
+def flood_fill(new_grid, queue: List[Tuple[int, int]]):
+    while len(queue) > 0:
+        c = queue.pop()
+        if get_coord(new_grid, c, '?') == '.':
+            for d in neighbor_coord_diffs:
+                queue.append(add(c, d))
+            new_grid[c[1]][c[0]] = 'I'
+
+
+# Relative direction change. 1: clockwise, -1: counter-clockwise
+rel_dir_change = {'UL': -1, 'UR': 1, 'RU': -1, 'RD': 1, 'DL': -1, 'DR': 1, 'LD': -1, 'LU': 1}
+
+
+def part2(data: List[str]):
+    loop_coords, loop_dirs = find_loop(data)
+    loop_direction_sum = sum(rel_dir_change.get(a + b, 0) for a, b in zip(loop_dirs, loop_dirs[1:]))
+    loop_direction = 'R' if loop_direction_sum > 0 else 'L'
+
+    # Indicate what is "inside" the grid based on symbol and loop direction (L=clockwise or R=cc)
     right_loop_inside = {'UF': [], 'LF': [(-1, 0), (0, -1)], 'R7': [], 'U7': [(1, 0), (0, -1)],
                          'RJ': [(1, 0), (0, 1)], 'DJ': [], 'DL': [(-1, 0), (0, 1)], 'LL': [],
                          'D|': [(-1, 0)], 'U|': [(1, 0)], 'R-': [(0, 1)], 'L-': [(0, -1)]}
     left_loop_inside = {'UF': [(-1, 0), (0, -1)], 'LF': [], 'R7': [(1, 0), (0, -1)], 'U7': [],
                         'RJ': [], 'DJ': [(1, 0), (0, 1)], 'DL': [], 'LL': [(-1, 0), (0, 1)],
                         'D|': [(1, 0)], 'U|': [(-1, 0)], 'R-': [(0, -1)], 'L-': [(0, 1)]}
+    inside_grid = right_loop_inside if loop_direction == 'R' else left_loop_inside
 
-    # Clean up grid
-    inside_grid = right_loop_inside if loop_dir == 'R' else left_loop_inside
+    # Create empty grid with only loop drawn
     new_grid = [['.' for _ in range(len(data[0]))] for _ in range(len(data))]
     for i, coord in enumerate(loop_coords):
         x, y = coord
@@ -130,25 +131,12 @@ def part2(data: List[str]):
             if get_coord(new_grid, c) == '.':
                 new_grid[c[1]][c[0]] = 'I'
 
-    # print_grid(new_grid)
-    # input('before flood fill')
-
-    def flood_fill(start_coord):
-        queue = []
-        for d in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-            queue.append(add(start_coord, d))
-        while len(queue) > 0:
-            c = queue.pop()
-            if get_coord(new_grid, c, '?') == '.':
-                for d in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-                    queue.append(add(c, d))
-                new_grid[c[1]][c[0]] = 'I'
-
     # Flood fill from Is
     for y in range(len(data)):
         for x in range(len(data[0])):
             if new_grid[y][x] == 'I':
-                flood_fill((x, y))
+                queue = [add((x, y), d) for d in neighbor_coord_diffs]
+                flood_fill(new_grid, queue)
 
     # print_grid(new_grid)
     return sum(sum([1 for c in line if c == 'I']) for line in new_grid)
