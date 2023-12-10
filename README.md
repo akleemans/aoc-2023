@@ -18,7 +18,7 @@ Timed with Codon 0.16.3: `python3 run_codon.py`
 | Day 7  | 0.009s  |
 | Day 8  | 0.080s* |
 | Day 9  | 0.004s  |
-| Day 10 |         |
+| Day 10 | 0.005s  |
 | Day 11 |         |
 | Day 12 |         |
 
