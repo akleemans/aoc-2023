@@ -1,6 +1,3 @@
-use std::fs;
-use std::time::Instant;
-
 fn part1(data: &str) -> i32 {
     let mut total_sum: i32 = 0;
     for line in data.lines() {
@@ -23,10 +20,10 @@ fn part1(data: &str) -> i32 {
 
 // Run with `rustc -O day09.rs && ./day09`
 fn main() {
-    let content = fs::read_to_string("inputs/day09.txt").expect("should read file");
-    let before = Instant::now();
+    let content = include_str!("inputs/day09.txt");
+    let before = std::time::Instant::now();
     let result = part1(&content);
     let elapsed = before.elapsed();
     println!("Result part 1: {result}, elapsed: {:?}", elapsed);
-    assert!(result == 1974913025);
+    assert_eq!(result, 1974913025);
 }
