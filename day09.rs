@@ -21,7 +21,7 @@ fn part1(data: &str) -> i32 {
     return total_sum;
 }
 
-// Run with `rustc day09.rs && ./day09`
+// Run with `rustc -O day09.rs && ./day09`
 fn main() {
     let content = fs::read_to_string("inputs/day09.txt").expect("should read file");
     let before = Instant::now();
