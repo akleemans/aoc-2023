@@ -19,7 +19,7 @@ Timed with Codon 0.16.3: `python3 run_codon.py`
 | Day 8  | 0.080s* |
 | Day 9  | 0.004s  |
 | Day 10 | 0.005s  |
-| Day 11 |         |
+| Day 11 | 0.063s  |
 | Day 12 |         |
 
 * = Not compiled to Codon yet
