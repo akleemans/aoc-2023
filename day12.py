@@ -43,22 +43,24 @@ def solve(data: List[str]):
             return
 
         # Else, continue search
-        min_remaining = sum(groups) + len(groups) - 2 #  - min_remaining
-        for i in range(new_idx, len(state)):
+        min_remaining = sum(groups) + len(groups) - 2
+        for i in range(new_idx, len(state) - min_remaining):
             place_next(state, [*groups], i)
             # Can't move past a given spring
             if state[i] == '#':
                 break
 
-    for line in data:
-        # print('Working on line', line)
+    for line_nr, line in enumerate(data):
+        print('Working on line', line_nr)
         state, group_str = line.split(' ')
         count_sums.append(0)
-        for i in range(0, len(state)):
-            place_next(state, [int(n) for n in group_str.split(',')], i)
+        all_groups = [int(n) for n in group_str.split(',')]
+        min_remaining = sum(all_groups) + len(all_groups) - 2
+        for i in range(0, len(state) - min_remaining):
+            place_next(state, [*all_groups], i)
             if state[i] == '#':
                 break
-    print('Total place calls:', total_place_calls)
+    print('Total place_next function calls:', total_place_calls)
     return sum(count_sums)
 
 
