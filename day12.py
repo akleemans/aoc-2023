@@ -10,40 +10,41 @@ test_data = '''???.### 1,1,3
 ?###???????? 3,2,1'''.split('\n')
 
 
+def place_next(state: str, groups: List[int], idx: int) -> int:
+    # Try to place
+    to_place = groups.pop(0)
+    if all(c in ['?', '#'] for c in state[idx:(idx + to_place)]) and (
+            idx + to_place == len(state) or state[idx + to_place] != '#'):
+        new_idx = idx + to_place + 1
+
+        # If all groups placed and no more # left, count solution
+        if len(groups) == 0:
+            if state[new_idx:].count('#') == 0:
+                return 1
+        else:
+            count_sum = 0
+            min_rem = sum(groups) + len(groups) - 1
+            for j in range(new_idx, len(state)- min_rem + 1):
+                count_sum += place_next(state, [*groups], j)
+                # Can't move past a given spring
+                if state[j] == '#':
+                    break
+            return count_sum
+    return 0
+
+
 def solve(data: List[str]):
-    count_sum = 0
-
-    def place_next(state: str, groups: List[int], idx: int):
-        # Try to place
-        to_place = groups.pop(0)
-        if all(c in ['?', '#'] for c in state[idx:(idx + to_place)]) and (
-                idx + to_place == len(state) or state[idx + to_place] != '#'):
-            new_idx = idx + to_place + 1
-
-            # If all groups placed and no more # left, count solution
-            if len(groups) == 0:
-                if state[new_idx:].count('#') == 0:
-                    nonlocal count_sum
-                    count_sum += 1
-            else:
-                min_rem = sum(groups) + len(groups) - 1
-                for j in range(new_idx, len(state) - min_rem + 1):
-                    place_next(state, [*groups], j)
-                    # Can't move past a given spring
-                    if state[j] == '#':
-                        break
-
+    total_sum = 0
     for line_nr in range(len(data)):
         print('Working on line', line_nr)
         initial_state, group_str = data[line_nr].split(' ')
         all_groups = [int(n) for n in group_str.split(',')]
         min_remaining = sum(all_groups) + len(all_groups) - 1
-        for i in range(0, len(initial_state) - min_remaining + 1):
-            place_next(initial_state, [*all_groups], i)
+        for i in range(0, len(initial_state)- min_remaining + 1):
+            total_sum += place_next(initial_state, [*all_groups], i)
             if initial_state[i] == '#':
                 break
-
-    return count_sum
+    return total_sum
 
 
 def part1(data: List[str]):
