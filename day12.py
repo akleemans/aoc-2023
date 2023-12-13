@@ -11,57 +11,39 @@ test_data = '''???.### 1,1,3
 
 
 def solve(data: List[str]):
-    total_place_calls = 0
-    count_sums = []
+    count_sum = 0
 
     def place_next(state: str, groups: List[int], idx: int):
-        nonlocal total_place_calls
-        total_place_calls += 1
-        # print('Trying', groups, 'starting at', idx)
-        if idx > 0 and state[idx - 1] == '#':
-            return
-
-        # Sanity check: If less place left than stuff to place, it's impossible
-        if (len(state) - idx) < (sum(groups) + len(groups) - 1):
-            return
-
         # Try to place
         to_place = groups.pop(0)
-        new_idx = 0
         if all(c in ['?', '#'] for c in state[idx:(idx + to_place)]) and (
                 idx + to_place == len(state) or state[idx + to_place] != '#'):
             new_idx = idx + to_place + 1
 
-        # If placing not possible, abort
-        if new_idx == 0:
-            return
+            # If all groups placed and no more # left, count solution
+            if len(groups) == 0:
+                if state[new_idx:].count('#') == 0:
+                    nonlocal count_sum
+                    count_sum += 1
+            else:
+                min_rem = sum(groups) + len(groups) - 1
+                for j in range(new_idx, len(state) - min_rem + 1):
+                    place_next(state, [*groups], j)
+                    # Can't move past a given spring
+                    if state[j] == '#':
+                        break
 
-        # If all groups placed and no more # left, count solution
-        if len(groups) == 0:
-            if state[new_idx:].count('#') == 0:
-                count_sums[-1] += 1
-            return
-
-        # Else, continue search
-        min_remaining = sum(groups) + len(groups) - 2
-        for i in range(new_idx, len(state) - min_remaining):
-            place_next(state, [*groups], i)
-            # Can't move past a given spring
-            if state[i] == '#':
-                break
-
-    for line_nr, line in enumerate(data):
+    for line_nr in range(len(data)):
         print('Working on line', line_nr)
-        state, group_str = line.split(' ')
-        count_sums.append(0)
+        initial_state, group_str = data[line_nr].split(' ')
         all_groups = [int(n) for n in group_str.split(',')]
-        min_remaining = sum(all_groups) + len(all_groups) - 2
-        for i in range(0, len(state) - min_remaining):
-            place_next(state, [*all_groups], i)
-            if state[i] == '#':
+        min_remaining = sum(all_groups) + len(all_groups) - 1
+        for i in range(0, len(initial_state) - min_remaining + 1):
+            place_next(initial_state, [*all_groups], i)
+            if initial_state[i] == '#':
                 break
-    print('Total place_next function calls:', total_place_calls)
-    return sum(count_sums)
+
+    return count_sum
 
 
 def part1(data: List[str]):
