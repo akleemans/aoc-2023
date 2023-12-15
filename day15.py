@@ -6,7 +6,7 @@ test_data = '''rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7
 '''.split('\n')
 
 
-def hash(s: str):
+def get_hash(s: str):
     current_value = 0
     for c in s:
         current_value += ord(c)
@@ -18,7 +18,7 @@ def hash(s: str):
 def part1(data: List[str]):
     total_sum = 0
     for part in data[0].split(','):
-        total_sum += hash(part)
+        total_sum += get_hash(part)
     return total_sum
 
 
@@ -27,11 +27,11 @@ def part2(data: List[str]):
     for part in data[0].split(','):
         if '-' in part:
             lens = part.split('-')[0]
-            idx = hash(lens)
+            idx = get_hash(lens)
             boxes[idx] = [b for b in boxes[idx] if b[0] != lens]
         elif '=' in part:
             lens, value = part.split('=')
-            idx = hash(lens)
+            idx = get_hash(lens)
             value = int(value)
             replaced = False
             for i in range(len(boxes[idx])):
