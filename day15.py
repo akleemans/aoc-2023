@@ -44,7 +44,7 @@ def part2(data: List[str]):
     total_sum = 0
     for i, box in enumerate(boxes):
         for j, slot in enumerate(box):
-            total_sum += (i+1) * (j+1) * slot[1]
+            total_sum += (i + 1) * (j + 1) * slot[1]
     return total_sum
 
 
