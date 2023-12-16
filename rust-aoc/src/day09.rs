@@ -20,16 +20,15 @@ fn solve(data: &str, backwards: bool) -> i32 {
     return total_sum;
 }
 
-// Run with `rustc -O day09.rs && ./day09`
 fn main() {
-    let content = include_str!("inputs/day09.txt");
+    let content = include_str!("../../inputs/day09.txt");
     let before = std::time::Instant::now();
     let result1 = solve(&content, false);
     assert_eq!(result1, 1974913025);
-    println!("Result part 1: {result1}");
+    // println!("Result part 1: {result1}");
     let result2 = solve(&content, true);
     assert_eq!(result2, 884);
-    println!("Result part 2: {result2}");
+    // println!("Result part 2: {result2}");
     let elapsed = before.elapsed();
-    println!("Elapsed: {:?}", elapsed);
+    println!("Day 9: {:?}", elapsed);
 }
