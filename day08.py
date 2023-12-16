@@ -1,5 +1,5 @@
 import math
-from typing import List, Dict, Self
+from typing import List, Dict
 
 # Day 8: Haunted Wasteland
 
@@ -23,7 +23,7 @@ XXX = (XXX, XXX)'''.split('\n')
 
 class Node:
     name: str
-    neighbors: Dict[str, Self]
+    neighbors: Dict[str, 'Node']
 
     def __init__(self, name):
         self.name = name
