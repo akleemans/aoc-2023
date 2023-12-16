@@ -1,4 +1,5 @@
 // Add days here so IntelliJ is happy
+mod day06;
 mod day09;
 mod day15;
 
