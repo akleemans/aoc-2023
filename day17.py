@@ -1,6 +1,4 @@
 from typing import List, Tuple
-#import sys
-#sys.setrecursionlimit(10000)
 
 # Day 17: Clumsy Crucible
 
@@ -37,43 +35,50 @@ def in_bounds(row: int, col: int, data: List[str]):
 
 
 def part1(data: List[str]):
-    heat_losses = [[10 ** 6 for i in data[0]] for j in data]
-
-    def go_next(row, col, last_value: int, path: str, not_optimal_for):
-        if not_optimal_for >= 3 or heat_losses[-1][-1] < last_value:
-            return
+    heat_losses = [[[10 ** 6] * 3 for _ in data[0]] for _ in data]
+    queue = [(0, 0, 0, 'R'), (0, 0, 0, 'D')]
+    count = 0
+    while len(queue) > 0:
+        if count % 10 ** 6 == 0:
+            print("count:", count, len(queue))
+        count += 1
+        row, col, last_value, path = queue.pop(0)
+        if min(heat_losses[-1][-1]) < last_value:
+            continue
         direction = path[-1]
+        straights_left = 2
+        for i in range(2, 5):
+            if len(path) < i or path[-i] != direction:
+                break
+            straights_left -= 1
         add_coord = dir_map[direction]
         new_row, new_col = add((row, col), add_coord)
         if not in_bounds(new_row, new_col, data):
-            return
+            continue
         next_value = last_value + int(data[new_row][new_col])
         # Update value
-        if heat_losses[new_row][new_col] < next_value:
-            # Can't be too low, else a simpler way is possible
-            #if heat_losses[new_row][new_col] < (next_value - 10):
-            #    return
-            not_optimal_for += 1
-        else:
-            not_optimal_for = 0
+        if heat_losses[new_row][new_col][straights_left] < next_value:
+            continue
 
-        heat_losses[new_row][new_col] = min(next_value, heat_losses[new_row][new_col])
+        for i in range(straights_left, -1, -1):
+            heat_losses[new_row][new_col][i] = min(next_value, heat_losses[new_row][new_col][i])
+        # If bottom right reached, stop search
         if new_row == len(data) - 1 and new_col == len(data[0]) - 1:
-            return
+            continue
 
+        new_nodes = []
         # Turn
         for d in dir_turn[direction]:
-            go_next(new_row, new_col, next_value, path + d, not_optimal_for)
-
+            new_nodes.append((new_row, new_col, next_value, path + d))
         # If not yet 3 times straight, go
         if path[-3:] != direction * 3:
-            go_next(new_row, new_col, next_value, path + direction, not_optimal_for)
+            new_nodes.append((new_row, new_col, next_value, path + direction))
+        # Simple heuristic: visit nodes closer to goal first
+        new_nodes.sort(key=lambda x: x[0] + x[1], reverse=True)
+        # queue.extend(new_nodes)
+        queue = [*new_nodes, *queue]
 
-
-    go_next(0, 0, 0, 'R', 0)
-    go_next(0, 0, 0, 'D', 0)
-
-    return heat_losses[-1][-1]
+    return min(heat_losses[-1][-1])
 
 
 def part2(data: List[str]):
