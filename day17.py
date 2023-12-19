@@ -1,11 +1,9 @@
-from typing import List, Tuple
+from typing import List, Tuple, Set
+from queue import PriorityQueue
 
-# Day 17: Clumsy Crucible
-
-test_data0 = '''19211
-11191
-99191
-99911'''.split('\n')
+test_data0 = '''19111
+11291
+91151'''.split('\n')
 
 test_data = '''2413432311323
 3215453535623
@@ -22,67 +20,84 @@ test_data = '''2413432311323
 4322674655533'''.split('\n')
 
 dir_map = {'R': (0, 1), 'L': (0, -1), 'U': (-1, 0), 'D': (1, 0)}
-dir_turn = {'R': 'DU', 'L': 'DU', 'U': 'RL', 'D': 'RL'}
+turn_map = {'R': 'UD', 'L': 'UD', 'U': 'LR', 'D': 'LR'}
 
 
-def add(a, b) -> Tuple[int, int]:
-    """Add two coordinates"""
+class Move:
+    def __init__(self, coord: Tuple[int, int], direction: str, cost: int, straight: int, path: str):
+        self.coord = coord
+        self.direction = direction
+        self.cost = cost
+        self.straight = straight
+        self.path = path
+
+    def hash(self):
+        return f'{self.coord}-{self.direction}-{self.straight}'
+
+    def __str__(self):
+        return f'{self.coord}-{self.direction}-{self.cost}-{self.straight}'
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __lt__(self, other):
+        """Used for comparing in PriorityQueue"""
+        return self.cost < other.cost
+
+
+def add(a: Tuple[int, int], b: Tuple[int, int]) -> Tuple[int, int]:
     return a[0] + b[0], a[1] + b[1]
 
 
-def in_bounds(row: int, col: int, data: List[str]):
+def in_bounds(row, col, data) -> bool:
     return 0 <= row < len(data) and 0 <= col < len(data[0])
 
 
+def dijkstra(cost_map: List[str], min_moves, max_moves) -> int:
+    """
+    Use a priority queue (!) on possible next nodes while keeping track of visited nodes. Because we always work with the
+    move with the lowest cost, we can guarantee to be finished if we first reach the end.
+    Uses a PriorityQueue (inserting: O(log n), removing: O(1))
+    Inspiration: https://github.com/biggysmith/advent_of_code_2023/blob/master/src/day17/day17.cpp
+    """
+    queue = PriorityQueue()
+    visited_moves: Set[str] = set()
+
+    queue.put(Move((0, 0), 'R', 0, 0, ''))
+    queue.put(Move((0, 0), 'D', 0, 0, ''))
+
+    while not queue.empty():
+        current_move = queue.get()
+        if current_move.hash() in visited_moves:
+            continue
+        visited_moves.add(current_move.hash())
+
+        if current_move.coord == (len(cost_map) - 1, len(cost_map[0]) - 1):
+            return current_move.cost
+
+        # Add turn moves
+        if current_move.straight >= min_moves - 1:
+            for d in turn_map[current_move.direction]:
+                new_row, new_col = add(current_move.coord, dir_map[d])
+                if in_bounds(new_row, new_col, cost_map):
+                    cost = current_move.cost + int(cost_map[new_row][new_col])
+                    queue.put(Move((new_row, new_col), d, cost, 0, current_move.path + d))
+
+        # Add straight moves, if available
+        if current_move.straight < max_moves - 1:
+            new_row, new_col = add(current_move.coord, dir_map[current_move.direction])
+            if in_bounds(new_row, new_col, cost_map):
+                cost = current_move.cost + int(cost_map[new_row][new_col])
+                queue.put(Move((new_row, new_col), current_move.direction, cost, current_move.straight + 1,
+                               current_move.path + current_move.direction))
+
+
 def part1(data: List[str]):
-    heat_losses = [[[10 ** 6] * 3 for _ in data[0]] for _ in data]
-    queue = [(0, 0, 0, 'R'), (0, 0, 0, 'D')]
-    count = 0
-    while len(queue) > 0:
-        if count % 10 ** 6 == 0:
-            print("count:", count, len(queue))
-        count += 1
-        row, col, last_value, path = queue.pop(0)
-        if min(heat_losses[-1][-1]) < last_value:
-            continue
-        direction = path[-1]
-        straights_left = 2
-        for i in range(2, 5):
-            if len(path) < i or path[-i] != direction:
-                break
-            straights_left -= 1
-        add_coord = dir_map[direction]
-        new_row, new_col = add((row, col), add_coord)
-        if not in_bounds(new_row, new_col, data):
-            continue
-        next_value = last_value + int(data[new_row][new_col])
-        # Update value
-        if heat_losses[new_row][new_col][straights_left] < next_value:
-            continue
-
-        for i in range(straights_left, -1, -1):
-            heat_losses[new_row][new_col][i] = min(next_value, heat_losses[new_row][new_col][i])
-        # If bottom right reached, stop search
-        if new_row == len(data) - 1 and new_col == len(data[0]) - 1:
-            continue
-
-        new_nodes = []
-        # Turn
-        for d in dir_turn[direction]:
-            new_nodes.append((new_row, new_col, next_value, path + d))
-        # If not yet 3 times straight, go
-        if path[-3:] != direction * 3:
-            new_nodes.append((new_row, new_col, next_value, path + direction))
-        # Simple heuristic: visit nodes closer to goal first
-        new_nodes.sort(key=lambda x: x[0] + x[1], reverse=True)
-        # queue.extend(new_nodes)
-        queue = [*new_nodes, *queue]
-
-    return min(heat_losses[-1][-1])
+    return dijkstra(data, 1, 3)
 
 
 def part2(data: List[str]):
-    return 1
+    return dijkstra(data, 4, 10)
 
 
 def main():
@@ -90,21 +105,16 @@ def main():
         data = [x.rstrip('\n') for x in read_file.readlines()]
 
     part1_test0_result = part1(test_data0)
-    print('Test input:', part1_test0_result)
-    assert part1_test0_result == 10, f'Part 1 test input returned {part1_test0_result}'
-
+    assert part1_test0_result == 9, f'Part 1 test0 input returned {part1_test0_result}'
     part1_test_result = part1(test_data)
-    print('Test input:', part1_test_result)
     assert part1_test_result == 102, f'Part 1 test input returned {part1_test_result}'
     part1_result = part1(data)
-    print('Part 1:', part1_result)  # remove
-    assert part1_result == 0, f'Part 1 returned {part1_result}'
+    assert part1_result == 785, f'Part 1 returned {part1_result}'
 
     part2_test_result = part2(test_data)
-    assert part2_test_result == 0, f'Part 2 test input returned {part2_test_result}'
+    assert part2_test_result == 94, f'Part 2 test input returned {part2_test_result}'
     part2_result = part2(data)
-    print('Part 2:', part2_result)  # remove
-    assert part2_result == 0, f'Part 2 returned {part2_result}'
+    assert part2_result == 922, f'Part 2 returned {part2_result}'
 
 
 if __name__ == '__main__':
