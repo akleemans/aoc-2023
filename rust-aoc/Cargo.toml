@@ -9,5 +9,5 @@ default-run = "main"
 
 [[bin]]
 name = "main"
-path = "src/day06.rs"
+path = "src/learn.rs"
 

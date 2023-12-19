@@ -33,7 +33,11 @@ All code in Python/[Codon](https://docs.exaloop.io/codon), some days also in Rus
 
 ## Learned along the way
 
-### Memoize using `@cache` (Day 12)
+### Rust!
+
+See `rust-aoc/src/learn.rs` and Rust days.
+
+### Python: Memoize using `@cache` (Day 12)
 
 For Dynamic Programming problems, it can be useful to memoize function results.
 Especially for recursive functions, it means that a whole branch can be skipped, as we can look up the result (if we

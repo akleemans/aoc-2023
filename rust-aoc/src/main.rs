@@ -2,6 +2,7 @@
 mod day06;
 mod day09;
 mod day15;
+mod learn;
 
 use std::process::Command;
 
