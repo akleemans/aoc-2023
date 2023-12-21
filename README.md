@@ -32,7 +32,7 @@ All code in Python/[Codon](https://docs.exaloop.io/codon), some days also in Rus
 | Day 18 | 45.1ms   | 3.1ms    |        |
 | Day 19 | 58.8ms   | -        |        |
 | Day 20 | 453.5ms  | -        |        |
-| Day 21 |          |          |        |
+| Day 21 | 148.4ms  | 27.5ms   |        |
 | Day 22 |          |          |        |
 | Day 23 |          |          |        |
 | Day 24 |          |          |        |
