@@ -1,6 +1,7 @@
 from itertools import combinations
 from typing import List, Tuple
-import numpy as np
+from sympy import solve
+from sympy.abc import a, b, c, d, e, f, t, u, v
 
 # Day 24: Never Tell Me The Odds
 
@@ -49,14 +50,29 @@ def part1(data: List[str], xy_min, xy_max):
 
 
 def part2(data: List[str]):
+    """Create equations based on the first three hailstone trajectories.
+    We don't know the starting position (3 unknowns) nor the velocity (3 unknowns)
+    but at timesteps t/u/v they have to match hailstones 0/1/2."""
     hailstones = parse_input(data)
-    a, b, c = hailstones[:3]
-    a = np.array([[1, 2], [3, 5]])
-    b = np.array([1, 2])
-    x = np.linalg.solve(a, b)
-    print('x')
+    h0, h1, h2 = hailstones[:3]
+    # (a, b, c): position of rock
+    # (d, e, f): velocity of rock
+    # t, u, v: time parameters
+    solutions = solve([
+        a + t * d - h0[0][0] - t * h0[1][0],
+        b + t * e - h0[0][1] - t * h0[1][1],
+        c + t * f - h0[0][2] - t * h0[1][2],
+        a + u * d - h1[0][0] - u * h1[1][0],
+        b + u * e - h1[0][1] - u * h1[1][1],
+        c + u * f - h1[0][2] - u * h1[1][2],
+        a + v * d - h2[0][0] - v * h2[1][0],
+        b + v * e - h2[0][1] - v * h2[1][1],
+        c + v * f - h2[0][2] - v * h2[1][2],
+    ], a, b, c, d, e, f, t, u, v)
+    solution = solutions[0]
+    pos_sum = solution[0] + solution[1] + solution[2]
 
-    return 1
+    return pos_sum
 
 
 def main():
@@ -71,8 +87,7 @@ def main():
     part2_test_result = part2(test_data)
     assert part2_test_result == 47, f'Part 2 test input returned {part2_test_result}'
     part2_result = part2(data)
-    print('Part 2:', part2_result)  # remove
-    assert part2_result == 0, f'Part 2 returned {part2_result}'
+    assert part2_result == 886858737029295, f'Part 2 returned {part2_result}'
 
 
 if __name__ == '__main__':
