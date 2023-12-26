@@ -1,5 +1,6 @@
-from itertools import combinations
+import random
 from typing import List, Dict
+from queue import PriorityQueue
 
 # Day 25: Snowverload
 
@@ -19,10 +20,6 @@ frs: qnr lhk lsr'''.split('\n')
 
 
 class Node:
-    name: str
-    neighbors: List[Node]
-    self_references: Dict[Node, int]
-
     def __init__(self, name):
         self.name = name
         self.neighbors = []
@@ -44,6 +41,17 @@ class Node:
     def __eq__(self, other):
         return self.name == other.name
 
+    def __lt__(self, other):
+        """Used for comparing in PriorityQueue"""
+        return self.name < other.name
+
+
+def edge_hash(n0, n1):
+    """Return edge hash"""
+    if n0.name < n1.name:
+        return n0.name + '-' + n1.name
+    return n1.name + '-' + n0.name
+
 
 def parse_input(data):
     node_dict = {}
@@ -62,7 +70,8 @@ def parse_input(data):
     return node_dict
 
 
-def find_groups(nodes, cuts):
+def find_groups(nodes: Dict, cuts: List[str]):
+    """Returns list of connected subgraphs given a list of cuts (node-node tuple)"""
     groups = []
     for node_name in nodes:
         visited = set()
@@ -79,7 +88,7 @@ def find_groups(nodes, cuts):
         while len(to_visit) > 0:
             current_node = to_visit.pop()
             for neighbor in current_node.neighbors:
-                if (current_node, neighbor) in cuts or (neighbor, current_node) in cuts:
+                if edge_hash(current_node, neighbor) in cuts:
                     continue
                 if neighbor not in visited:
                     to_visit.append(neighbor)
@@ -89,64 +98,52 @@ def find_groups(nodes, cuts):
     return groups
 
 
+def dijkstra(a, b, cuts):
+    """BFS to find path from a to b, ignoring edges in 'cuts'"""
+    queue = PriorityQueue()
+    visited_nodes = set()
+    queue.put((0, [a]))
+
+    while not queue.empty():
+        _, path = queue.get()
+        last_node = path[-1]
+        if last_node.name in visited_nodes:
+            continue
+        visited_nodes.add(last_node.name)
+        if last_node == b:
+            return path
+        for neighbor in last_node.neighbors:
+            if edge_hash(last_node, neighbor) not in cuts:
+                new_path = [*path, neighbor]
+                queue.put((len(new_path), new_path))
+
+
 def part1(data: List[str]):
     nodes = parse_input(data)
-    for node_name in nodes:
-        node = nodes[node_name]
-        for neighbor1 in node.neighbors:
-            node.self_references[neighbor1] = 0
-            for neighbor2 in neighbor1.neighbors:
-                if node in neighbor2.neighbors:
-                    node.self_references[neighbor1] += 1
-
-    # Print connections for visual solving
-    # visited = set()
-    # for node_name in nodes:
-    #    node = nodes[node_name]
-    #    for neighbor in node.neighbors:
-    #        if (node, neighbor) in visited or (neighbor, node) in visited:
-    #            continue
-    #        visited.add((node, neighbor))
-    #        print(f'{node_name} -> {neighbor.name}')
-
-    # Check possible cuts
-    possible_cuts = set()
-    for node_name in nodes:
-        node = nodes[node_name]
-        for neighbor in node.self_references:
-            if node.self_references[neighbor] == 0:
-                if (node, neighbor) not in possible_cuts and (neighbor, node) not in possible_cuts:
-                    possible_cuts.add((node, neighbor))
-
-    l = list(nodes.values())
-    l.sort(key=lambda n: len(n.neighbors))
-    for n in l[:30]:
-        print(n, len(n.neighbors))
-    # Trying cut combinations
-    print('Trying combining', len(possible_cuts), 'possible cuts')
-    count = 0
-    possible_cuts2 = []
-    for cut in possible_cuts:
-        s = str(cut)
-        if 'nnl' in s or 'rkh' in s or 'hrs' in s:
-            possible_cuts2.append(cut)
-
-    for cuts in combinations(possible_cuts2, 3):
-        count += 1
-        if count % 10000 == 0:
-            print('Combination count:', count)
+    groups = []
+    while True:
+        # Pick 2 random points and delete paths between them, 3 times
+        # If we were lucky and picked two points from separate parts of the graph the 3 critical edges should be removed
+        a = random.choice(list(nodes.values()))
+        b = random.choice(list(nodes.values()))
+        cuts = []
+        for _ in range(3):
+            path = dijkstra(a, b, cuts)
+            for i in range(len(path) - 1):
+                cuts.append(edge_hash(path[i], path[i + 1]))
         groups = find_groups(nodes, cuts)
         if len(groups) == 2:
-            mult = len(groups[0]) * len(groups[1])
-            return mult
+            break
+
+    return len(groups[0]) * len(groups[1])
 
 
 def main():
     with open('inputs/day25.txt') as read_file:
         data = [x.rstrip('\n') for x in read_file.readlines()]
 
-    # part1_test_result = part1(test_data)
-    # assert part1_test_result == 54, f'Part 1 test input returned {part1_test_result}'
+    part1_test_result = part1(test_data)
+    assert part1_test_result == 54, f'Part 1 test input returned {part1_test_result}'
     part1_result = part1(data)
     assert part1_result == 614655, f'Part 1 returned {part1_result}'
 
