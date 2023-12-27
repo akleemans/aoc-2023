@@ -1,4 +1,4 @@
-from typing import List, Set
+from typing import List
 
 # Day 22: Sand Slabs
 
@@ -27,16 +27,12 @@ def parse_input(data):
     return bricks
 
 
-def get_collisions(new_brick, bricks, stop_early=False) -> Set[int]:
-    collision_ids = set()
+def has_collision(new_brick, bricks):
     for coord in new_brick:
-        for i, brick in enumerate(bricks):
+        for brick in bricks:
             if coord in brick:
-                if stop_early:
-                    return {i}
-                collision_ids.add(i)
-                continue
-    return collision_ids
+                return True
+    return False
 
 
 def enable_gravity(original_bricks):
@@ -45,11 +41,10 @@ def enable_gravity(original_bricks):
     while change:
         change = False
         for i, brick in enumerate(bricks):
-            # If already at ground, skip
             if min(c[2] for c in brick) == 1:
                 continue
             new_brick = [(c[0], c[1], c[2] - 1) for c in brick]
-            if len(get_collisions(new_brick, bricks[:i] + bricks[i + 1:], True)) == 0:
+            if not has_collision(new_brick, bricks[:i] + bricks[i + 1:]):
                 bricks[i] = new_brick
                 change = True
     return bricks
@@ -58,6 +53,7 @@ def enable_gravity(original_bricks):
 def part1(data: List[str]):
     bricks = parse_input(data)
     bricks = enable_gravity(bricks)
+    bricks.sort(key=lambda b: min(c[2] for c in b))
 
     useless_bricks = 0
     for i, brick in enumerate(bricks):
