@@ -1,6 +1,6 @@
 import random
 from typing import List, Dict
-from queue import PriorityQueue
+from heapq import heappop, heappush
 
 # Day 25: Snowverload
 
@@ -100,12 +100,12 @@ def find_groups(nodes: Dict, cuts: List[str]):
 
 def dijkstra(a, b, cuts):
     """BFS to find path from a to b, ignoring edges in 'cuts'"""
-    queue = PriorityQueue()
+    queue = []
     visited_nodes = set()
-    queue.put((0, [a]))
+    heappush(queue, (0, [a]))
 
-    while not queue.empty():
-        _, path = queue.get()
+    while len(queue) > 0:
+        _, path = heappop(queue)
         last_node = path[-1]
         if last_node.name in visited_nodes:
             continue
@@ -115,7 +115,7 @@ def dijkstra(a, b, cuts):
         for neighbor in last_node.neighbors:
             if edge_hash(last_node, neighbor) not in cuts:
                 new_path = [*path, neighbor]
-                queue.put((len(new_path), new_path))
+                heappush(queue, (len(new_path), new_path))
 
 
 def part1(data: List[str]):
