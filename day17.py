@@ -28,21 +28,20 @@ def get_hash(coord, direction, straight):
 
 def dijkstra(cost_map: List[str], min_moves, max_moves) -> int:
     """
-    Use a priority queue (!) on possible next nodes while keeping track of visited nodes. Because we always work with the
-    move with the lowest cost, we can guarantee to be finished if we first reach the end.
-    Uses a PriorityQueue (inserting: O(log n), removing: O(1))
+    Use a priority queue (!) on possible next nodes while keeping track of visited nodes. Because we always work with
+    the move with the lowest cost, we can guarantee to be finished if we first reach the end.
     Inspiration: https://github.com/biggysmith/advent_of_code_2023/blob/master/src/day17/day17.cpp
     """
-    pqueue = []
+    queue = []
     visited_moves: Set[str] = set()
     cost_map = [[int(c) for c in line] for line in cost_map]
 
     # Tuple: cost, coord, direction, straight
-    heappush(pqueue, (0, (0, 0), 'R', 0))
-    heappush(pqueue, (0, (0, 0), 'D', 0))
+    heappush(queue, (0, (0, 0), 'R', 0))
+    heappush(queue, (0, (0, 0), 'D', 0))
 
-    while len(pqueue) > 0:
-        cost, coord, direction, straight = heappop(pqueue)
+    while len(queue) > 0:
+        cost, coord, direction, straight = heappop(queue)
         move_hash = get_hash(coord, direction, straight)
         if move_hash in visited_moves:
             continue
@@ -57,14 +56,14 @@ def dijkstra(cost_map: List[str], min_moves, max_moves) -> int:
                 new_row, new_col = add(coord, dir_map[d])
                 if in_bounds(new_row, new_col, cost_map):
                     new_cost = cost + cost_map[new_row][new_col]
-                    heappush(pqueue, (new_cost, (new_row, new_col), d, 0))
+                    heappush(queue, (new_cost, (new_row, new_col), d, 0))
 
         # Add straight moves, if available
         if straight < max_moves - 1:
             new_row, new_col = add(coord, dir_map[direction])
             if in_bounds(new_row, new_col, cost_map):
                 new_cost = cost + cost_map[new_row][new_col]
-                heappush(pqueue, (new_cost, (new_row, new_col), direction, straight + 1))
+                heappush(queue, (new_cost, (new_row, new_col), direction, straight + 1))
 
 
 def part1(data: List[str]):
