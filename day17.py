@@ -1,5 +1,7 @@
-from typing import List, Tuple, Set
-from queue import PriorityQueue
+import queue
+from typing import List, Set
+
+from utils import dir_map, turn_map, add, in_bounds
 
 test_data0 = '''19111
 11291
@@ -19,38 +21,9 @@ test_data = '''2413432311323
 2546548887735
 4322674655533'''.split('\n')
 
-dir_map = {'R': (0, 1), 'L': (0, -1), 'U': (-1, 0), 'D': (1, 0)}
-turn_map = {'R': 'UD', 'L': 'UD', 'U': 'LR', 'D': 'LR'}
 
-
-class Move:
-    def __init__(self, coord: Tuple[int, int], direction: str, cost: int, straight: int, path: str):
-        self.coord = coord
-        self.direction = direction
-        self.cost = cost
-        self.straight = straight
-        self.path = path
-
-    def hash(self):
-        return f'{self.coord}-{self.direction}-{self.straight}'
-
-    def __str__(self):
-        return f'{self.coord}-{self.direction}-{self.cost}-{self.straight}'
-
-    def __repr__(self):
-        return self.__str__()
-
-    def __lt__(self, other):
-        """Used for comparing in PriorityQueue"""
-        return self.cost < other.cost
-
-
-def add(a: Tuple[int, int], b: Tuple[int, int]) -> Tuple[int, int]:
-    return a[0] + b[0], a[1] + b[1]
-
-
-def in_bounds(row, col, data) -> bool:
-    return 0 <= row < len(data) and 0 <= col < len(data[0])
+def get_hash(coord, direction, straight):
+    return f'{coord}-{direction}-{straight}'
 
 
 def dijkstra(cost_map: List[str], min_moves, max_moves) -> int:
@@ -60,36 +33,38 @@ def dijkstra(cost_map: List[str], min_moves, max_moves) -> int:
     Uses a PriorityQueue (inserting: O(log n), removing: O(1))
     Inspiration: https://github.com/biggysmith/advent_of_code_2023/blob/master/src/day17/day17.cpp
     """
-    queue = PriorityQueue()
+    pqueue = queue.PriorityQueue()
     visited_moves: Set[str] = set()
+    cost_map = [[int(c) for c in line] for line in cost_map]
 
-    queue.put(Move((0, 0), 'R', 0, 0, ''))
-    queue.put(Move((0, 0), 'D', 0, 0, ''))
+    # Tuple: cost, coord, direction, straight
+    pqueue.put((0, (0, 0), 'R', 0))
+    pqueue.put((0, (0, 0), 'D', 0))
 
-    while not queue.empty():
-        current_move = queue.get()
-        if current_move.hash() in visited_moves:
+    while not pqueue.empty():
+        cost, coord, direction, straight = pqueue.get()
+        move_hash = get_hash(coord, direction, straight)
+        if move_hash in visited_moves:
             continue
-        visited_moves.add(current_move.hash())
+        visited_moves.add(move_hash)
 
-        if current_move.coord == (len(cost_map) - 1, len(cost_map[0]) - 1):
-            return current_move.cost
+        if coord == (len(cost_map) - 1, len(cost_map[0]) - 1):
+            return cost
 
         # Add turn moves
-        if current_move.straight >= min_moves - 1:
-            for d in turn_map[current_move.direction]:
-                new_row, new_col = add(current_move.coord, dir_map[d])
+        if straight >= min_moves - 1:
+            for d in turn_map[direction]:
+                new_row, new_col = add(coord, dir_map[d])
                 if in_bounds(new_row, new_col, cost_map):
-                    cost = current_move.cost + int(cost_map[new_row][new_col])
-                    queue.put(Move((new_row, new_col), d, cost, 0, current_move.path + d))
+                    new_cost = cost + cost_map[new_row][new_col]
+                    pqueue.put((new_cost, (new_row, new_col), d, 0))
 
         # Add straight moves, if available
-        if current_move.straight < max_moves - 1:
-            new_row, new_col = add(current_move.coord, dir_map[current_move.direction])
+        if straight < max_moves - 1:
+            new_row, new_col = add(coord, dir_map[direction])
             if in_bounds(new_row, new_col, cost_map):
-                cost = current_move.cost + int(cost_map[new_row][new_col])
-                queue.put(Move((new_row, new_col), current_move.direction, cost, current_move.straight + 1,
-                               current_move.path + current_move.direction))
+                new_cost = cost + cost_map[new_row][new_col]
+                pqueue.put((new_cost, (new_row, new_col), direction, straight + 1))
 
 
 def part1(data: List[str]):
