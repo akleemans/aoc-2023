@@ -1,5 +1,5 @@
-import queue
 from typing import List, Set
+from heapq import heappop, heappush
 
 from utils import dir_map, turn_map, add, in_bounds
 
@@ -33,16 +33,16 @@ def dijkstra(cost_map: List[str], min_moves, max_moves) -> int:
     Uses a PriorityQueue (inserting: O(log n), removing: O(1))
     Inspiration: https://github.com/biggysmith/advent_of_code_2023/blob/master/src/day17/day17.cpp
     """
-    pqueue = queue.PriorityQueue()
+    pqueue = []
     visited_moves: Set[str] = set()
     cost_map = [[int(c) for c in line] for line in cost_map]
 
     # Tuple: cost, coord, direction, straight
-    pqueue.put((0, (0, 0), 'R', 0))
-    pqueue.put((0, (0, 0), 'D', 0))
+    heappush(pqueue, (0, (0, 0), 'R', 0))
+    heappush(pqueue, (0, (0, 0), 'D', 0))
 
-    while not pqueue.empty():
-        cost, coord, direction, straight = pqueue.get()
+    while len(pqueue) > 0:
+        cost, coord, direction, straight = heappop(pqueue)
         move_hash = get_hash(coord, direction, straight)
         if move_hash in visited_moves:
             continue
@@ -57,14 +57,14 @@ def dijkstra(cost_map: List[str], min_moves, max_moves) -> int:
                 new_row, new_col = add(coord, dir_map[d])
                 if in_bounds(new_row, new_col, cost_map):
                     new_cost = cost + cost_map[new_row][new_col]
-                    pqueue.put((new_cost, (new_row, new_col), d, 0))
+                    heappush(pqueue, (new_cost, (new_row, new_col), d, 0))
 
         # Add straight moves, if available
         if straight < max_moves - 1:
             new_row, new_col = add(coord, dir_map[direction])
             if in_bounds(new_row, new_col, cost_map):
                 new_cost = cost + cost_map[new_row][new_col]
-                pqueue.put((new_cost, (new_row, new_col), direction, straight + 1))
+                heappush(pqueue, (new_cost, (new_row, new_col), direction, straight + 1))
 
 
 def part1(data: List[str]):
