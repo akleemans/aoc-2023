@@ -1,5 +1,7 @@
 from typing import List, Tuple
 
+from utils import dir_map, add, subtract
+
 # Day 18: Lavaduct Lagoon
 
 test_data = '''R 6 (#70c710)
@@ -16,16 +18,6 @@ R 2 (#7807d2)
 U 3 (#a77fa3)
 L 2 (#015232)
 U 2 (#7a21e3)'''.split('\n')
-
-dir_map = {'R': (0, 1), 'L': (0, -1), 'U': (-1, 0), 'D': (1, 0)}
-
-
-def add(a, b) -> Tuple[int, int]:
-    return a[0] + b[0], a[1] + b[1]
-
-
-def subtract(a, b) -> Tuple[int, int]:
-    return b[0] - a[0], b[1] - a[1]
 
 
 def area_shoelace(coords: List[Tuple[int, int]]):

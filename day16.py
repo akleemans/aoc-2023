@@ -1,4 +1,6 @@
-from typing import List, Tuple
+from typing import List
+
+from utils import in_bounds, dir_map
 
 # Day 16: The Floor Will Be Lava
 
@@ -13,7 +15,6 @@ test_data = r'''.|...\....
 .|....-|.\
 ..//.|....'''.split('\n')
 
-dir_map = {'R': (0, 1), 'L': (0, -1), 'U': (-1, 0), 'D': (1, 0)}
 symbol_map = {
     '\\': {'R': ['D'], 'L': ['U'], 'U': ['L'], 'D': ['R']},
     '/': {'R': ['U'], 'L': ['D'], 'U': ['R'], 'D': ['L']},
@@ -21,10 +22,6 @@ symbol_map = {
     '-': {'R': ['R'], 'L': ['L'], 'U': ['L', 'R'], 'D': ['R', 'L']},
     '.': {'R': ['R'], 'L': ['L'], 'U': ['U'], 'D': ['D']},
 }
-
-
-def in_bounds(row, col, data):
-    return 0 <= row < len(data) and 0 <= col < len(data[0])
 
 
 def solve(data, start_beam) -> int:

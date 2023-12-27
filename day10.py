@@ -1,5 +1,7 @@
 from typing import List, Tuple
 
+from utils import add
+
 # Day 10: Pipe Maze
 
 test_data = '''..F7.
@@ -41,11 +43,6 @@ def get_coord(data, coord, oob_char='.'):
     if x < 0 or y < 0 or x >= len(data[0]) or y >= len(data):
         return oob_char
     return data[y][x]
-
-
-def add(a, b) -> Tuple[int, int]:
-    """Add two coordinates"""
-    return a[0] + b[0], a[1] + b[1]
 
 
 def find_start(data: List[str]) -> Tuple[int, int]:

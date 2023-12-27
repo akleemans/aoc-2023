@@ -1,4 +1,6 @@
-from typing import List, Tuple
+from typing import List
+
+from utils import dir_map, add
 
 # Day 23: A Long Walk
 
@@ -26,16 +28,11 @@ test_data = '''#.#####################
 #.....###...###...#...#
 #####################.#'''.split('\n')
 
-dir_map = {'R': (0, 1), 'L': (0, -1), 'U': (-1, 0), 'D': (1, 0)}
 valid_dir_tiles = {'R': '.>', 'L': '.<', 'U': '.^', 'D': '.v'}
 
 
 def end_pos(grid):
     return len(grid) - 1, len(grid[0]) - 2
-
-
-def add(a, b) -> Tuple[int, int]:
-    return a[0] + b[0], a[1] + b[1]
 
 
 def walk(grid, pos, next_dir, length, slopes_walkable) -> int:

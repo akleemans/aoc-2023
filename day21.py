@@ -1,4 +1,6 @@
-from typing import List, Tuple
+from typing import List
+
+from utils import add, dir_map
 
 # Day 21: Step Counter
 
@@ -13,12 +15,6 @@ test_data = '''...........
 .##.#.####.
 .##..##.##.
 ...........'''.split('\n')
-
-dir_map = {'R': (0, 1), 'L': (0, -1), 'U': (-1, 0), 'D': (1, 0)}
-
-
-def add(a, b) -> Tuple[int, int]:
-    return a[0] + b[0], a[1] + b[1]
 
 
 def part1(data: List[str], steps=64):
