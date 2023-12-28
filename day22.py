@@ -1,5 +1,3 @@
-import time
-
 # Day 22: Sand Slabs
 
 test_data = '''1,0,1~1,2,1
@@ -28,12 +26,9 @@ def parse_input(data):
 
 
 def has_collision(new_brick, bricks, ignore_brick):
-    # max_z = max([c[2] for c in new_brick])
     for i, brick in enumerate(bricks):
         if i == ignore_brick:
             continue
-        # if min([c[2] for c in brick]) > max_z:
-        #    return False
         for coord in new_brick:
             if coord in brick:
                 return True
@@ -52,11 +47,13 @@ def enable_gravity(original_bricks):
             if not has_collision(new_brick, bricks, i):
                 bricks[i] = new_brick
                 change = True
-        bricks.sort(key=lambda b: min(c[2] for c in b))
     return bricks
 
 
-def part1(bricks):
+def part1(data):
+    bricks = parse_input(data)
+    bricks = enable_gravity(bricks)
+
     useless_bricks = 0
     for i, brick in enumerate(bricks):
         other_bricks = bricks[:i] + bricks[i + 1:]
@@ -67,7 +64,10 @@ def part1(bricks):
     return useless_bricks
 
 
-def part2(bricks):
+def part2(data):
+    bricks = parse_input(data)
+    bricks = enable_gravity(bricks)
+
     sum_of_fallen = 0
     for i, brick in enumerate(bricks):
         other_bricks = bricks[:i] + bricks[i + 1:]
@@ -82,21 +82,15 @@ def part2(bricks):
 def main():
     with open('inputs/day22.txt') as read_file:
         data = [x.rstrip('\n') for x in read_file.readlines()]
-    bricks = parse_input(data)
-    bricks = enable_gravity(bricks)
 
-    # part1_test_result = part1(test_data)
-    # assert part1_test_result == 5, f'Part 1 test input returned {part1_test_result}'
-    start_time = time.time()
-    part1_result = part1(bricks)
-    print('Part 1:', time.time() - start_time)
+    part1_test_result = part1(test_data)
+    assert part1_test_result == 5, f'Part 1 test input returned {part1_test_result}'
+    part1_result = part1(data)
     assert part1_result == 409, f'Part 1 returned {part1_result}'
 
-    # part2_test_result = part2(test_data)
-    # assert part2_test_result == 7, f'Part 2 test input returned {part2_test_result}'
-    start_time = time.time()
-    part2_result = part2(bricks)
-    print('Part 2:', time.time() - start_time)
+    part2_test_result = part2(test_data)
+    assert part2_test_result == 7, f'Part 2 test input returned {part2_test_result}'
+    part2_result = part2(data)
     assert part2_result == 61097, f'Part 2 returned {part2_result}'
 
 

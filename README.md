@@ -12,31 +12,31 @@ All code in Python/[Codon](https://docs.exaloop.io/codon), some days also in Rus
 
 | Day    | Python   | Codon   | Rust   |
 |--------|----------|---------|--------|
-| Day 1  | 76.7ms   | 23.2ms  |        |
-| Day 2  | 28.2ms   | 4.0ms   |        |
-| Day 3  | 68.7ms   | 8.2ms   |        |
-| Day 4  | 36.5ms   | 5.4ms   |        |
-| Day 5  | ?        | 4.7s    |        |
-| Day 6  | 3.0s     | 363.9ms | 21.3ms |
-| Day 7  | 50.5ms   | 12.0ms  |        |
+| Day 1  | 76.7ms   | 16.9ms  |        |
+| Day 2  | 28.2ms   | 2.9ms   |        |
+| Day 3  | 68.7ms   | 4.7ms   |        |
+| Day 4  | 36.5ms   | 3.8ms   |        |
+| Day 5  | ?        | 3.3s    |        |
+| Day 6  | 3.0s     | 253.1ms | 21.3ms |
+| Day 7  | 50.5ms   | 7.5ms   |        |
 | Day 8  | 144.2ms  | -       |        |
-| Day 9  | 40.4ms   | 5.0ms   | 505µs  |
-| Day 10 | 80.6ms   | 13.5ms  |        |
-| Day 11 | 1.2s     | 89.0ms  |        |
+| Day 9  | 40.4ms   | 3.8ms   | 505µs  |
+| Day 10 | 80.6ms   | 5.3ms   |        |
+| Day 11 | 1.2s     | 57.0ms  |        |
 | Day 12 | 400.3ms  | -       |        |
-| Day 13 | 286.5ms  | 35.9ms  |        |
-| Day 14 | 4392.7ms | 390.7ms |        |
-| Day 15 | 51.8ms   | 4.5ms   | 590µs  |
-| Day 16 | 2.5s     | 516.9ms |        |
-| Day 17 | 4.3s     | -       |        |
-| Day 18 | 45.1ms   | 3.1ms   |        |
+| Day 13 | 286.5ms  | 30.7ms  |        |
+| Day 14 | 4392.7ms | 251.8ms |        |
+| Day 15 | 51.8ms   | 3.6ms   | 590µs  |
+| Day 16 | 2.5s     | 437.0ms |        |
+| Day 17 | 4.3s     | 1.6s    |        |
+| Day 18 | 45.1ms   | 2.4ms   |        |
 | Day 19 | 58.8ms   | -       |        |
 | Day 20 | 453.5ms  | -       |        |
-| Day 21 | 148.4ms  | 27.5ms  |        |
-| Day 22 | ?        | 79.8s   |        |
+| Day 21 | 148.4ms  | 13.2ms  |        |
+| Day 22 | ?        | 108.6s  |        |
 | Day 23 | ?        | 14.5s   |        |
 | Day 24 | 846.5ms  | -       |        |
-| Day 25 | 203.4ms  | -       |        |
+| Day 25 | 203.4ms  | 17.1ms  |        |
 
 Ranking for all 50 stars: 2871st place
 
