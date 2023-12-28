@@ -20,10 +20,12 @@ frs: qnr lhk lsr'''.split('\n')
 
 
 class Node:
+    name: str
+    neighbors: List[Node]
+
     def __init__(self, name):
         self.name = name
         self.neighbors = []
-        self.self_references = {}
 
     def __str__(self):
         neighbor_names = '-'.join(n.name for n in self.neighbors)
