@@ -1,4 +1,4 @@
-from typing import List
+import time
 
 # Day 22: Sand Slabs
 
@@ -27,9 +27,14 @@ def parse_input(data):
     return bricks
 
 
-def has_collision(new_brick, bricks):
-    for coord in new_brick:
-        for brick in bricks:
+def has_collision(new_brick, bricks, ignore_brick):
+    # max_z = max([c[2] for c in new_brick])
+    for i, brick in enumerate(bricks):
+        if i == ignore_brick:
+            continue
+        # if min([c[2] for c in brick]) > max_z:
+        #    return False
+        for coord in new_brick:
             if coord in brick:
                 return True
     return False
@@ -44,17 +49,14 @@ def enable_gravity(original_bricks):
             if min(c[2] for c in brick) == 1:
                 continue
             new_brick = [(c[0], c[1], c[2] - 1) for c in brick]
-            if not has_collision(new_brick, bricks[:i] + bricks[i + 1:]):
+            if not has_collision(new_brick, bricks, i):
                 bricks[i] = new_brick
                 change = True
+        bricks.sort(key=lambda b: min(c[2] for c in b))
     return bricks
 
 
-def part1(data: List[str]):
-    bricks = parse_input(data)
-    bricks = enable_gravity(bricks)
-    bricks.sort(key=lambda b: min(c[2] for c in b))
-
+def part1(bricks):
     useless_bricks = 0
     for i, brick in enumerate(bricks):
         other_bricks = bricks[:i] + bricks[i + 1:]
@@ -65,10 +67,7 @@ def part1(data: List[str]):
     return useless_bricks
 
 
-def part2(data: List[str]):
-    bricks = parse_input(data)
-    bricks = enable_gravity(bricks)
-
+def part2(bricks):
     sum_of_fallen = 0
     for i, brick in enumerate(bricks):
         other_bricks = bricks[:i] + bricks[i + 1:]
@@ -83,15 +82,21 @@ def part2(data: List[str]):
 def main():
     with open('inputs/day22.txt') as read_file:
         data = [x.rstrip('\n') for x in read_file.readlines()]
+    bricks = parse_input(data)
+    bricks = enable_gravity(bricks)
 
-    part1_test_result = part1(test_data)
-    assert part1_test_result == 5, f'Part 1 test input returned {part1_test_result}'
-    part1_result = part1(data)
+    # part1_test_result = part1(test_data)
+    # assert part1_test_result == 5, f'Part 1 test input returned {part1_test_result}'
+    start_time = time.time()
+    part1_result = part1(bricks)
+    print('Part 1:', time.time() - start_time)
     assert part1_result == 409, f'Part 1 returned {part1_result}'
 
-    part2_test_result = part2(test_data)
-    assert part2_test_result == 7, f'Part 2 test input returned {part2_test_result}'
-    part2_result = part2(data)
+    # part2_test_result = part2(test_data)
+    # assert part2_test_result == 7, f'Part 2 test input returned {part2_test_result}'
+    start_time = time.time()
+    part2_result = part2(bricks)
+    print('Part 2:', time.time() - start_time)
     assert part2_result == 61097, f'Part 2 returned {part2_result}'
 
 
