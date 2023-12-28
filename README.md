@@ -19,7 +19,7 @@ All code in Python/[Codon](https://docs.exaloop.io/codon), some days also in Rus
 | Day 5  | ?        | 3.3s    |        |
 | Day 6  | 3.0s     | 253.1ms | 21.3ms |
 | Day 7  | 50.5ms   | 7.5ms   |        |
-| Day 8  | 144.2ms  | -       |        |
+| Day 8  | 144.2ms  | 15.4ms  |        |
 | Day 9  | 40.4ms   | 3.8ms   | 505µs  |
 | Day 10 | 80.6ms   | 5.3ms   |        |
 | Day 11 | 1.2s     | 57.0ms  |        |
@@ -31,7 +31,7 @@ All code in Python/[Codon](https://docs.exaloop.io/codon), some days also in Rus
 | Day 17 | 4.3s     | 1.6s    |        |
 | Day 18 | 45.1ms   | 2.4ms   |        |
 | Day 19 | 58.8ms   | -       |        |
-| Day 20 | 453.5ms  | -       |        |
+| Day 20 | 453.5ms  | 74.4ms  |        |
 | Day 21 | 148.4ms  | 13.2ms  |        |
 | Day 22 | ?        | 108.6s  |        |
 | Day 23 | ?        | 14.5s   |        |

@@ -1,5 +1,6 @@
-import math
 from typing import List, Tuple, Dict
+
+from utils import lcm
 
 # Day 20: Pulse Propagation
 
@@ -144,7 +145,7 @@ def part2(data: List[str]):
                     modules[receiver].receive_pulse(signal_type, sender)
                     queue.append(modules[receiver].get_out_signals())
         button_presses += 1
-    return math.lcm(*sender_values.values())
+    return lcm(sender_values.values())
 
 
 def main():

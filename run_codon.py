@@ -10,12 +10,10 @@ if __name__ == '__main__':
     times = 20
     for d in range(1, 26):
         p = 'day' + str(d).zfill(2)
-        if d in [8, 12, 19, 20, 24]:
+        if d in [12, 19, 24]:
             # Exclusions not working with Codon:
-            # - Day 8: math.lcm(*args)
             # - Day 12: @cache decorator (functools)
             # - Day 19: Dynamic list items (tuples or str)
-            # - Day 20: math.lcm(*args)
             # - Day 24: Sympy
             print(p, ': -')
             continue

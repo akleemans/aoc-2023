@@ -1,5 +1,6 @@
-import math
 from typing import List, Dict
+
+from utils import lcm
 
 # Day 8: Haunted Wasteland
 
@@ -23,7 +24,7 @@ XXX = (XXX, XXX)'''.split('\n')
 
 class Node:
     name: str
-    neighbors: Dict[str, 'Node']
+    neighbors: Dict[str, Node]
 
     def __init__(self, name):
         self.name = name
@@ -71,7 +72,7 @@ def part2(data: List[str]):
             node = node.move(d)
             move_count += 1
         cycles.append(move_count)
-    return math.lcm(*cycles)
+    return lcm(cycles)
 
 
 def main():

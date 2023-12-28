@@ -43,3 +43,11 @@ class TestUtils(unittest.TestCase):
         self.assertEqual([1, 2, 3, 4, 5], queue.queue)
         self.assertEqual(1, queue.get())
         self.assertEqual([2, 3, 4, 5], queue.queue)
+
+    def test_gcd(self):
+        self.assertEqual(5, utils.gcd(10, 15))
+        self.assertEqual(7, utils.gcd(7, 21))
+
+    def test_lcm(self):
+        self.assertEqual(70, utils.lcm([2, 5, 7]))
+        self.assertEqual(420, utils.lcm([2, 3, 4, 5, 7]))

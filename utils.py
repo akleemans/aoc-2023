@@ -22,6 +22,23 @@ def subtract(a, b) -> Tuple[int, int]:
     return a[0] - b[0], a[1] - b[1]
 
 
+# Math
+
+def gcd(n, m):
+    """Calculate GCD (greatest common divisor)"""
+    if m == 0:
+        return n
+    return gcd(m, n % m)
+
+
+def lcm(numbers):
+    """Calculates the LCM (least common multiple) for a list of numbers"""
+    l = 1
+    for n in numbers:
+        l = l * n // gcd(l, n)
+    return l
+
+
 # PriorityQueue
 
 
