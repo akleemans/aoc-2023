@@ -3,6 +3,7 @@ from typing import Tuple, List
 # Graph / node related stuff
 
 dir_map = {'R': (0, 1), 'L': (0, -1), 'U': (-1, 0), 'D': (1, 0)}
+dir_reverse = {'R': 'L', 'L': 'R', 'U': 'D', 'D': 'U'}
 turn_map = {'R': 'UD', 'L': 'UD', 'U': 'LR', 'D': 'LR'}
 
 
