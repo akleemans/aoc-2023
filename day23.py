@@ -1,6 +1,6 @@
-from typing import List
+from typing import List, Dict, Tuple, Set
 
-from utils import dir_map, add
+from utils import dir_map, add, in_bounds
 
 # Day 23: A Long Walk
 
@@ -45,8 +45,6 @@ def walk(grid, pos, next_dir, length, slopes_walkable) -> int:
         length += 1
         grid[row][col] = 'O'
         if pos == end_pos(grid):
-            # if length >= 6430:
-            #    print('New length found:', length)
             return length
 
         # Find next possible directions
@@ -72,9 +70,49 @@ def part1(data: List[str]):
 
 
 def part2(data: List[str]):
-    start = (-1, 1)
-    grid = [list(line) for line in data]
-    return walk(grid, start, 'D', -1, True)
+    # Build simplified graph
+    nodes: Dict[Tuple[int, int], List[Tuple[Tuple[int, int], int]]] = {}
+    for row in range(len(data)):
+        for col in range(len(data[0])):
+            if data[row][col] != '#':
+                neighbors = []
+                for d in 'ULDR':
+                    new_row, new_col = add((row, col), dir_map[d])
+                    if in_bounds(new_row, new_col, data) and data[new_row][new_col] != '#':
+                        neighbors.append(((new_row, new_col), 1))
+                nodes[(row, col)] = neighbors
+
+    # Contract nodes
+    changed = True
+    while changed:
+        changed = False
+        for node_name in nodes:
+            neighbors = nodes[node_name]
+            if len(neighbors) == 2:
+                nodes.pop(node_name)
+                n0, n1 = neighbors
+                dist = n0[1] + n1[1]
+                # Wire neighbors together
+                nodes[n0[0]] = [n for n in nodes[n0[0]] if n[0] != node_name] + [(n1[0], dist)]
+                nodes[n1[0]] = [n for n in nodes[n1[0]] if n[0] != node_name] + [(n0[0], dist)]
+                changed = True
+                break
+
+    # DFS
+    start_node = (0, 1)
+    end_node = (len(data) - 1, len(data[0]) - 2)
+
+    def walk2(node_name: Tuple[int, int], visited: Set[Tuple[int, int]], length: int) -> int:
+        if node_name == end_node:
+            return length
+        visited.add(node_name)
+        next_nodes = [-1]
+        for neighbor, dist in nodes[node_name]:
+            if neighbor not in visited:
+                next_nodes.append(walk2(neighbor, visited.copy(), length + dist))
+        return max(next_nodes)
+
+    return walk2(start_node, set(), 0)
 
 
 def main():
